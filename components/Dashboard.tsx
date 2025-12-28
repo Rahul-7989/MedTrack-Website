@@ -259,7 +259,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-softIvory pb-20 relative font-medium">
+    <div className="min-h-screen bg-softIvory pb-20 relative font-medium text-charcoal">
       {successMessage && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 bg-softMint border-2 border-mutedTeal/20 text-charcoal rounded-[2rem] shadow-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4">
           <CheckCircle2 className="w-5 h-5 text-mutedTeal" />
@@ -385,7 +385,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
           </div>
 
           <div className="space-y-10">
-            {/* Status Widget - Inverted to remove white text */}
+            {/* Status Widget */}
             <div className="bg-softMint border-2 border-mutedTeal/20 text-charcoal rounded-[3.5rem] p-12 shadow-xl relative overflow-hidden">
                <div className="absolute top-0 right-0 w-32 h-32 bg-mutedTeal/5 rounded-bl-full" />
                <ShieldCheck className="w-12 h-12 text-mutedTeal mb-10 relative z-10" />
@@ -413,14 +413,52 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
         </div>
       </section>
 
-      {/* Modal - Text Inversion */}
+      {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-6">
           <div className="absolute inset-0 bg-charcoal/40 backdrop-blur-md" onClick={() => !isSubmitting && setShowModal(false)} />
-          <div className="relative w-full max-w-lg bg-white rounded-[4rem] p-14 shadow-2xl animate-in zoom-in-95 border-2 border-paleSage">
+          <div className="relative w-full max-w-lg bg-white rounded-[4rem] p-10 md:p-14 shadow-2xl animate-in zoom-in-95 border-2 border-paleSage overflow-y-auto max-h-[90vh]">
             <h2 className="text-4xl font-black text-charcoal mb-10">{editId ? 'Edit Medicine' : 'New Medicine'}</h2>
 
             <form onSubmit={handleSaveMedication} className="space-y-8">
+              {/* Image Upload Selection */}
+              <div className="space-y-3">
+                <label className="text-xs font-black uppercase tracking-widest text-softAsh ml-1">Visual Guide (Optional)</label>
+                <div className="flex items-center gap-6">
+                  <div className="w-24 h-24 rounded-2xl bg-lightSand border-2 border-paleSage flex items-center justify-center text-mutedTeal overflow-hidden shadow-inner">
+                    {medImage ? (
+                      <img src={medImage} className="w-full h-full object-cover" alt="Preview" />
+                    ) : (
+                      <ImageIcon className="w-10 h-10 opacity-30" />
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleImageChange}
+                      className="hidden" 
+                      id="med-image-upload" 
+                    />
+                    <label 
+                      htmlFor="med-image-upload"
+                      className="px-6 py-3 bg-paleSage/30 border-2 border-paleSage rounded-2xl text-charcoal font-black cursor-pointer hover:bg-paleSage/50 transition-all text-sm shadow-sm"
+                    >
+                      {medImage ? 'Change Image' : 'Upload Photo'}
+                    </label>
+                    {medImage && (
+                      <button 
+                        type="button" 
+                        onClick={() => setMedImage(null)}
+                        className="text-careRose font-black text-xs hover:underline text-left pl-1"
+                      >
+                        Remove Image
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-3">
                 <label className="text-xs font-black uppercase tracking-widest text-softAsh ml-1">Medication Name</label>
                 <input type="text" value={medName} onChange={(e) => setMedName(e.target.value)} required className="w-full h-16 bg-lightSand border-2 border-paleSage rounded-2xl px-8 text-charcoal font-black focus:outline-none focus:border-mutedTeal" placeholder="e.g. Daily Vitamins" />
@@ -437,7 +475,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
                 </div>
               </div>
 
-              <div className="flex gap-6 pt-10">
+              <div className="flex gap-6 pt-6">
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-5 font-black text-softAsh text-xl hover:text-charcoal transition-all">Cancel</button>
                 <button type="submit" disabled={isSubmitting} className="flex-[2] py-5 bg-softMint text-charcoal font-black rounded-3xl text-xl shadow-lg border-2 border-mutedTeal/20 hover:bg-mutedTeal/10 transition-all">
                   {isSubmitting ? 'Saving...' : 'Save to Hub'}
@@ -448,7 +486,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
         </div>
       )}
 
-      {/* Delete Modal - Solid background */}
+      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
           <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
