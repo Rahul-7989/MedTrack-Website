@@ -24,7 +24,6 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Correctly using modular onAuthStateChanged to sync user state
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setIsLoading(true);
       if (currentUser) {
@@ -70,7 +69,6 @@ const App: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      // Correctly using modular signOut function
       await signOut(auth);
       setView('home');
     } catch (error) {
@@ -87,7 +85,7 @@ const App: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-softIvory">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-mutedTeal"></div>
-          <p className="font-semibold text-mutedSlate animate-pulse">MedTrack is waking up...</p>
+          <p className="font-black text-mutedSlate animate-pulse">MedTrack is waking up...</p>
         </div>
       </div>
     );
@@ -103,17 +101,17 @@ const App: React.FC = () => {
           <HowItWorks />
           <section className="px-6 py-24 text-center bg-lightSand">
             <div className="max-w-3xl mx-auto space-y-8">
-              <h2 className="text-3xl md:text-5xl font-bold text-charcoal">Ready to take the stress out of health?</h2>
+              <h2 className="text-3xl md:text-5xl font-black text-charcoal">Ready to take the stress out of health?</h2>
               <div className="flex flex-col items-center gap-6">
                 <button 
                   onClick={() => handleNavigate('signup')} 
-                  className="px-12 py-5 bg-mutedTeal text-softIvory font-bold rounded-2xl soft-shadow hover:-translate-y-1 transition-all text-xl"
+                  className="px-12 py-5 bg-softMint text-charcoal font-black rounded-2xl border-2 border-mutedTeal/20 shadow-lg hover:bg-mutedTeal/10 transition-all text-xl"
                 >
                   Start Your Family Hub
                 </button>
                 <button 
                   onClick={() => handleNavigate('signin')} 
-                  className="text-mutedSlate font-medium hover:text-charcoal transition-colors border-b border-softAsh/30 pb-1"
+                  className="text-mutedSlate font-black hover:text-charcoal transition-colors border-b-2 border-softAsh/30 pb-1"
                 >
                   Already part of a family hub? Sign in
                 </button>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Logo } from '../constants';
 import { View } from '../types';
@@ -69,21 +70,21 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-[85vh] bg-softIvory flex flex-col items-center justify-center px-6 py-12">
-      <div className="w-full max-w-2xl bg-paleSage rounded-[3rem] p-10 md:p-16 soft-shadow border border-softAsh/5">
+      <div className="w-full max-w-2xl bg-white rounded-[3rem] p-10 md:p-16 shadow-xl border-2 border-paleSage">
         <div className="text-center mb-12">
           <div className="text-mutedTeal flex justify-center mb-8">
             <Logo className="w-20 h-20" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-charcoal mb-4">
+          <h1 className="text-4xl md:text-5xl font-black text-charcoal mb-4">
             Your Family Hub
           </h1>
-          <p className="text-xl text-mutedSlate">
+          <p className="text-xl text-mutedSlate font-black">
             Name your hub and invite others to care with you.
           </p>
         </div>
 
         {error && (
-          <div className="w-full p-5 mb-10 bg-warmAmber/10 text-warmAmber text-sm font-bold rounded-2xl border border-warmAmber/20">
+          <div className="w-full p-5 mb-10 bg-warmAmber/10 text-warmAmber text-sm font-black rounded-2xl border border-warmAmber/20">
             {error}
           </div>
         )}
@@ -98,7 +99,7 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
               placeholder="e.g. Home Care Group"
               value={hubName}
               onChange={(e) => setHubName(e.target.value)}
-              className="w-full h-16 bg-softIvory/50 border border-softAsh/10 rounded-2xl px-8 text-xl text-charcoal focus:outline-none focus:ring-4 focus:ring-mutedTeal/10 transition-all placeholder:text-softAsh/40"
+              className="w-full h-16 bg-lightSand border-2 border-paleSage rounded-2xl px-8 text-xl text-charcoal font-black focus:outline-none focus:border-mutedTeal/30 transition-all placeholder:text-softAsh/40"
               required
             />
           </div>
@@ -113,16 +114,16 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
                   type="text" 
                   value={joinCode}
                   readOnly
-                  className="w-full h-16 bg-mutedTeal/5 border-2 border-dashed border-mutedTeal/20 rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.5em] text-mutedTeal text-center focus:outline-none"
+                  className="w-full h-16 bg-softMint/30 border-2 border-dashed border-mutedTeal/20 rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.5em] text-mutedTeal text-center focus:outline-none"
                 />
               </div>
               <button 
                 onClick={handleCopy}
                 type="button"
-                className={`h-16 px-10 rounded-2xl flex items-center justify-center gap-3 transition-all font-bold text-lg ${
+                className={`h-16 px-10 rounded-2xl flex items-center justify-center gap-3 transition-all font-black text-lg border-2 ${
                   copied 
-                    ? 'bg-softMint text-mutedTeal' 
-                    : 'bg-mutedTeal/10 text-mutedTeal hover:bg-mutedTeal/20'
+                    ? 'bg-softMint border-mutedTeal/30 text-mutedTeal shadow-inner' 
+                    : 'bg-paleSage/30 border-paleSage text-softAsh hover:bg-paleSage/50'
                 }`}
               >
                 {copied ? <Check className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
@@ -135,13 +136,13 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
             <button 
               onClick={handleCreateHub}
               disabled={loading || !hubName.trim()}
-              className="w-full py-6 bg-mutedTeal text-softIvory font-bold text-2xl rounded-2xl soft-shadow hover:opacity-95 transition-all disabled:opacity-30 disabled:pointer-events-none active:scale-95"
+              className="w-full py-6 bg-softMint text-charcoal border-2 border-mutedTeal/20 font-black text-2xl rounded-2xl shadow-lg hover:bg-mutedTeal/10 transition-all disabled:opacity-30 disabled:pointer-events-none active:scale-95"
             >
               {loading ? "Creating..." : "Create Family Hub"}
             </button>
             <button 
               onClick={() => onNavigate('hub-choice')}
-              className="py-2 text-mutedSlate hover:text-charcoal font-bold transition-colors text-base underline underline-offset-8 decoration-softAsh/30"
+              className="py-2 text-mutedSlate hover:text-charcoal font-black transition-colors text-base underline underline-offset-8 decoration-softAsh/30"
             >
               Cancel and go back
             </button>

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedTrack - Connected Family Care</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,11 +13,11 @@
         body {
             font-family: 'Lexend', sans-serif;
             background-color: #FAF9F6;
-            color: #111827;
+            color: #000000;
             scroll-behavior: smooth;
         }
         .soft-shadow {
-            box-shadow: 0 20px 40px -10px rgba(17, 24, 39, 0.12), 0 10px 20px -5px rgba(17, 24, 39, 0.08);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1);
         }
         @keyframes float {
             0% { transform: translateY(0px) rotate(-45deg); }
@@ -28,13 +29,52 @@
         }
         ::selection {
             background-color: #CCFBF1;
-            color: #111827;
+            color: #000000;
         }
     </style>
-    </head>
-<body class="bg-softIvory text-charcoal overflow-x-hidden">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mutedTeal: '#0D6E6A',
+                        warmAmber: '#D97706',
+                        softMint: '#CCFBF1',
+                        softIvory: '#FAF9F6',
+                        lightSand: '#F3F4F6',
+                        paleSage: '#E5E7EB',
+                        charcoal: '#000000',
+                        mutedSlate: '#1F2937',
+                        softAsh: '#374151',
+                        careRose: '#DC2626'
+                    },
+                    borderRadius: {
+                        '3xl': '1.5rem',
+                        '4xl': '2.5rem',
+                        '5xl': '3.5rem',
+                    }
+                }
+            }
+        }
+    </script>
+<script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.475.0",
+    "react": "https://esm.sh/react@^19.0.0",
+    "react-dom": "https://esm.sh/react-dom@^19.0.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "firebase/": "https://esm.sh/firebase@^12.7.0/"
+  }
+}
+</script>
+</head>
+<body class="bg-softIvory text-charcoal">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
     <script type="module" src="./index.tsx"></script>
 </body>
 </html>

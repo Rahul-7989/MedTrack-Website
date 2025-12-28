@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Logo, BRAND_NAME } from '../constants';
 import { View, User } from '../types';
@@ -24,14 +25,14 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView, user, hubName,
           <div className="text-mutedTeal transition-transform group-hover:scale-105">
             <Logo className="w-10 h-10" />
           </div>
-          <span className="text-2xl font-bold tracking-tight text-charcoal">
+          <span className="text-2xl font-black tracking-tight text-charcoal">
             {BRAND_NAME}
           </span>
         </div>
 
         {isDashboard && hubName && (
           <div className="hidden md:flex items-center gap-2 pl-6 border-l border-softAsh/20">
-            <span className="px-4 py-1.5 bg-softMint/40 text-mutedTeal text-xs font-bold rounded-full uppercase tracking-widest">
+            <span className="px-4 py-1.5 bg-softMint text-mutedTeal text-xs font-black rounded-full uppercase tracking-widest border border-mutedTeal/10">
               {hubName}
             </span>
           </div>
@@ -42,11 +43,11 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView, user, hubName,
         {user ? (
           <div className="flex items-center gap-4 pl-4 border-l border-softAsh/20 group relative">
             <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold text-charcoal leading-none mb-1">{user.name}</p>
-              <p className="text-[10px] text-mutedSlate leading-none uppercase tracking-wider font-semibold opacity-70">{user.email}</p>
+              <p className="text-sm font-black text-charcoal leading-none mb-1">{user.name}</p>
+              <p className="text-[10px] text-mutedSlate leading-none uppercase tracking-wider font-black opacity-80">{user.email}</p>
             </div>
-            <div className="w-10 h-10 rounded-full bg-softMint/50 border border-mutedTeal/20 flex items-center justify-center text-mutedTeal overflow-hidden shadow-inner">
-               <UserIcon className="w-5 h-5 opacity-60" />
+            <div className="w-10 h-10 rounded-full bg-softMint border border-mutedTeal/20 flex items-center justify-center text-mutedTeal overflow-hidden shadow-inner">
+               <UserIcon className="w-5 h-5" />
             </div>
             
             <button 
@@ -61,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView, user, hubName,
           <div className="flex items-center gap-3">
             <button 
               onClick={() => onNavigate('signin')}
-              className={`px-5 py-2 text-sm font-semibold transition-colors rounded-full ${
+              className={`px-5 py-2 text-sm font-black transition-colors rounded-full ${
                 currentView === 'signin' 
                   ? 'text-mutedTeal' 
                   : 'text-mutedSlate hover:text-charcoal'
@@ -71,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView, user, hubName,
             </button>
             <button 
               onClick={() => onNavigate('signup')}
-              className="px-6 py-2.5 text-sm font-bold bg-mutedTeal text-softIvory hover:opacity-90 transition-all rounded-xl soft-shadow"
+              className="px-6 py-2.5 text-sm font-black bg-softMint text-charcoal border-2 border-mutedTeal/10 hover:bg-mutedTeal/10 transition-all rounded-xl shadow-sm"
             >
               Join Hub
             </button>

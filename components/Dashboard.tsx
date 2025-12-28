@@ -261,14 +261,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
   return (
     <div className="min-h-screen bg-softIvory pb-20 relative font-medium">
       {successMessage && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 bg-charcoal text-white rounded-[2rem] shadow-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4">
-          <CheckCircle2 className="w-5 h-5 text-softMint" />
-          <span className="font-bold text-sm tracking-tight">{successMessage}</span>
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 bg-softMint border-2 border-mutedTeal/20 text-charcoal rounded-[2rem] shadow-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4">
+          <CheckCircle2 className="w-5 h-5 text-mutedTeal" />
+          <span className="font-black text-sm tracking-tight">{successMessage}</span>
         </div>
       )}
 
       {hasMissedDoses && (
-        <div className="bg-careRose/20 border-b border-careRose/30 py-5 px-6 md:px-12 flex items-center justify-center gap-4 text-careRose text-sm font-bold">
+        <div className="bg-careRose/20 border-b border-careRose/30 py-5 px-6 md:px-12 flex items-center justify-center gap-4 text-careRose text-sm font-black">
           <AlertTriangle className="w-5 h-5" />
           <span>Care Alert: A dose was missed. Hub members notified.</span>
         </div>
@@ -277,28 +277,28 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
       <section className="px-6 md:px-12 pt-12 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-mutedTeal font-bold uppercase tracking-widest text-xs">
+            <div className="flex items-center gap-2 text-mutedTeal font-black uppercase tracking-widest text-xs">
               <LayoutDashboard className="w-4 h-4" />
               Family Hub
             </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-charcoal tracking-tight">{hubName || 'Dashboard'}</h1>
+            <h1 className="text-4xl md:text-5xl font-black text-charcoal tracking-tight">{hubName || 'Dashboard'}</h1>
             <div className="flex items-center gap-4">
               <button 
-                className="group px-6 py-4 bg-white border-2 border-paleSage rounded-3xl flex items-center gap-6 soft-shadow transition-all active:scale-95" 
+                className="group px-6 py-4 bg-white border-2 border-paleSage rounded-3xl flex items-center gap-6 soft-shadow transition-all active:scale-95 hover:border-mutedTeal/20" 
                 onClick={handleCopyCode}
                 title="Copy join code"
               >
                 <span className="text-xs font-black uppercase tracking-[0.2em] text-softAsh">Join Code</span>
                 <span className="font-mono font-black text-mutedTeal text-2xl">{hubCode}</span>
-                <div className="p-2 bg-mutedTeal text-white rounded-xl">
+                <div className="p-2 bg-softMint text-mutedTeal rounded-xl border border-mutedTeal/10">
                    {codeCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                 </div>
               </button>
             </div>
           </div>
 
-          <button onClick={openAddModal} className="flex items-center gap-3 px-12 py-6 bg-mutedTeal text-white font-extrabold rounded-3xl soft-shadow hover:brightness-95 active:scale-95 transition-all text-xl shadow-lg">
-            <Plus className="w-7 h-7" />
+          <button onClick={openAddModal} className="flex items-center gap-3 px-12 py-6 bg-softMint text-charcoal font-black rounded-3xl border-2 border-mutedTeal/20 soft-shadow hover:bg-mutedTeal/10 active:scale-95 transition-all text-xl shadow-lg">
+            <Plus className="w-7 h-7 text-mutedTeal" />
             Add Medication
           </button>
         </div>
@@ -306,12 +306,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-12">
             <div className="space-y-8">
-              <h2 className="text-3xl font-extrabold text-charcoal">Daily Tasks</h2>
+              <h2 className="text-3xl font-black text-charcoal">Daily Tasks</h2>
 
               {isLoading ? (
                 <div className="py-24 flex flex-col items-center gap-6">
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-mutedTeal/20 border-t-mutedTeal"></div>
-                  <p className="text-charcoal font-bold tracking-widest uppercase text-xs">Syncing hub...</p>
+                  <p className="text-mutedSlate font-black tracking-widest uppercase text-xs">Syncing hub...</p>
                 </div>
               ) : upcomingMeds.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -320,13 +320,13 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
                     return (
                       <div key={med.id} className={`group relative bg-white rounded-[2.5rem] p-10 border-2 transition-all shadow-md ${isMissed ? 'border-careRose/40' : 'border-paleSage hover:shadow-2xl hover:border-mutedTeal/20'}`}>
                         <div className="flex justify-between items-start mb-10">
-                          <div className={`px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 ${isMissed ? 'bg-careRose text-white' : 'bg-mutedTeal text-white'}`}>
-                            {isMissed ? <AlertTriangle className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
+                          <div className={`px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 ${isMissed ? 'bg-careRose/20 text-careRose border border-careRose/30' : 'bg-softMint text-charcoal border border-mutedTeal/10'}`}>
+                            {isMissed ? <AlertTriangle className="w-4 h-4" /> : <Clock className="w-4 h-4 text-mutedTeal" />}
                             {isMissed ? 'Late' : 'Upcoming'}
                           </div>
                           <div className="flex gap-4">
-                            <button onClick={(e) => openEditModal(e, med)} className="p-3 bg-lightSand text-charcoal rounded-xl hover:bg-mutedTeal hover:text-white transition-all" aria-label="Edit"><Pencil className="w-5 h-5" /></button>
-                            <button onClick={(e) => triggerDeleteConfirm(e, med)} className="p-3 bg-lightSand text-careRose rounded-xl hover:bg-careRose hover:text-white transition-all" aria-label="Delete"><Trash2 className="w-5 h-5" /></button>
+                            <button onClick={(e) => openEditModal(e, med)} className="p-3 bg-lightSand text-softAsh rounded-xl hover:bg-mutedTeal/10 hover:text-charcoal transition-all border border-paleSage" aria-label="Edit"><Pencil className="w-5 h-5" /></button>
+                            <button onClick={(e) => triggerDeleteConfirm(e, med)} className="p-3 bg-lightSand text-careRose rounded-xl hover:bg-careRose/10 transition-all border border-paleSage" aria-label="Delete"><Trash2 className="w-5 h-5" /></button>
                           </div>
                         </div>
 
@@ -341,12 +341,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
                         </div>
 
                         <div className="p-5 bg-lightSand/50 border border-paleSage rounded-2xl mb-10">
-                          <p className="text-charcoal font-bold text-lg">{med.dosage}</p>
+                          <p className="text-mutedSlate font-black text-lg">{med.dosage}</p>
                         </div>
 
                         <button 
                           onClick={() => handleTakeMedicine(med.id)} 
-                          className={`w-full py-5 font-black rounded-2xl text-white shadow-xl transition-all active:scale-95 text-lg ${isMissed ? 'bg-careRose' : 'bg-mutedTeal'}`}
+                          className={`w-full py-5 font-black rounded-2xl text-charcoal shadow-md transition-all active:scale-95 text-lg border-2 ${isMissed ? 'bg-careRose/20 border-careRose/30' : 'bg-softMint border-mutedTeal/20'}`}
                         >
                           Mark as Taken
                         </button>
@@ -357,26 +357,26 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
               ) : (
                 <div className="bg-white rounded-[4rem] p-24 text-center border-2 border-paleSage shadow-sm">
                    <CheckCircle2 className="w-20 h-20 text-mutedTeal mx-auto mb-8" />
-                   <p className="text-charcoal text-2xl font-bold">All tasks completed for today.</p>
-                   <p className="text-mutedSlate mt-2">The hub is in good health.</p>
+                   <p className="text-charcoal text-2xl font-black">All tasks completed for today.</p>
+                   <p className="text-mutedSlate mt-2 font-black">The hub is in good health.</p>
                 </div>
               )}
             </div>
 
             {takenMeds.length > 0 && (
               <div className="space-y-8">
-                <h2 className="text-3xl font-extrabold text-charcoal">Completed</h2>
+                <h2 className="text-3xl font-black text-charcoal">Completed</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {takenMeds.map((med) => (
                     <div key={med.id} className="bg-paleSage/30 rounded-[2.5rem] p-8 border-2 border-paleSage">
                       <div className="flex justify-between items-center mb-6">
-                        <span className="text-xs font-black uppercase tracking-widest text-mutedTeal bg-softMint px-4 py-1.5 rounded-full">Completed</span>
-                        <button onClick={() => handleUntakeMedicine(med.id)} className="p-3 text-softAsh hover:text-mutedTeal bg-white rounded-xl shadow-sm transition-all">
+                        <span className="text-xs font-black uppercase tracking-widest text-charcoal bg-softMint border border-mutedTeal/20 px-4 py-1.5 rounded-full">Completed</span>
+                        <button onClick={() => handleUntakeMedicine(med.id)} className="p-3 text-softAsh hover:text-mutedTeal bg-white rounded-xl shadow-sm transition-all border border-paleSage">
                           <RotateCcw className="w-5 h-5" />
                         </button>
                       </div>
-                      <h3 className="text-xl font-black text-charcoal line-through decoration-charcoal/40">{med.name}</h3>
-                      <p className="text-softAsh font-bold mt-1">Logged at {formatDisplayTime(med.reminderTime)}</p>
+                      <h3 className="text-xl font-black text-mutedSlate line-through decoration-mutedSlate/40">{med.name}</h3>
+                      <p className="text-softAsh font-black mt-1">Logged at {formatDisplayTime(med.reminderTime)}</p>
                     </div>
                   ))}
                 </div>
@@ -385,12 +385,12 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
           </div>
 
           <div className="space-y-10">
-            {/* Status Widget */}
-            <div className="bg-charcoal text-white rounded-[3.5rem] p-12 shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-mutedTeal/20 rounded-bl-full" />
-               <ShieldCheck className="w-12 h-12 text-softMint mb-10 relative z-10" />
+            {/* Status Widget - Inverted to remove white text */}
+            <div className="bg-softMint border-2 border-mutedTeal/20 text-charcoal rounded-[3.5rem] p-12 shadow-xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-mutedTeal/5 rounded-bl-full" />
+               <ShieldCheck className="w-12 h-12 text-mutedTeal mb-10 relative z-10" />
                <h3 className="text-3xl font-black leading-tight mb-6 relative z-10">Family Shield</h3>
-               <p className="text-lg text-paleSage font-medium leading-relaxed relative z-10">
+               <p className="text-lg text-mutedSlate font-black leading-relaxed relative z-10">
                  MedTrack monitors your family hub. Late doses are flagged to all members to ensure consistent care.
                </p>
             </div>
@@ -404,42 +404,42 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
                <div className="w-full bg-lightSand h-5 rounded-full overflow-hidden border border-paleSage">
                   <div className="bg-mutedTeal h-full transition-all duration-1000" style={{ width: `${completionRate}%` }} />
                </div>
-               <p className="text-lg text-charcoal font-bold leading-tight">
+               <p className="text-lg text-mutedSlate font-black leading-tight">
                  Hub progress is <span className="text-mutedTeal">{completionRate}%</span> complete.
                </p>
-               <p className="text-mutedSlate text-sm">Keep up the great teamwork!</p>
+               <p className="text-softAsh text-sm font-black">Keep up the great teamwork!</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Modal - Improved visibility */}
+      {/* Modal - Text Inversion */}
       {showModal && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-md" onClick={() => !isSubmitting && setShowModal(false)} />
-          <div className="relative w-full max-w-lg bg-white rounded-[4rem] p-14 shadow-2xl animate-in zoom-in-95">
+          <div className="absolute inset-0 bg-charcoal/40 backdrop-blur-md" onClick={() => !isSubmitting && setShowModal(false)} />
+          <div className="relative w-full max-w-lg bg-white rounded-[4rem] p-14 shadow-2xl animate-in zoom-in-95 border-2 border-paleSage">
             <h2 className="text-4xl font-black text-charcoal mb-10">{editId ? 'Edit Medicine' : 'New Medicine'}</h2>
 
             <form onSubmit={handleSaveMedication} className="space-y-8">
               <div className="space-y-3">
-                <label className="text-xs font-black uppercase tracking-widest text-charcoal ml-1">Medication Name</label>
+                <label className="text-xs font-black uppercase tracking-widest text-softAsh ml-1">Medication Name</label>
                 <input type="text" value={medName} onChange={(e) => setMedName(e.target.value)} required className="w-full h-16 bg-lightSand border-2 border-paleSage rounded-2xl px-8 text-charcoal font-black focus:outline-none focus:border-mutedTeal" placeholder="e.g. Daily Vitamins" />
               </div>
               
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <label className="text-xs font-black uppercase tracking-widest text-charcoal ml-1">Dosage</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-softAsh ml-1">Dosage</label>
                   <input type="text" placeholder="e.g. 1 Tablet" value={medDosage} onChange={(e) => setMedDosage(e.target.value)} className="w-full h-16 bg-lightSand border-2 border-paleSage rounded-2xl px-8 font-black text-charcoal focus:outline-none focus:border-mutedTeal" />
                 </div>
                 <div className="space-y-3">
-                  <label className="text-xs font-black uppercase tracking-widest text-charcoal ml-1">Reminder Time</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-softAsh ml-1">Reminder Time</label>
                   <input type="time" value={medTime} onChange={(e) => setMedTime(e.target.value)} required className="w-full h-16 bg-lightSand border-2 border-paleSage rounded-2xl px-8 font-black text-charcoal focus:outline-none focus:border-mutedTeal" />
                 </div>
               </div>
 
               <div className="flex gap-6 pt-10">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-5 font-black text-mutedSlate text-xl hover:text-charcoal transition-all">Cancel</button>
-                <button type="submit" disabled={isSubmitting} className="flex-[2] py-5 bg-mutedTeal text-white font-black rounded-3xl text-xl shadow-lg hover:brightness-95 active:scale-95 transition-all">
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-5 font-black text-softAsh text-xl hover:text-charcoal transition-all">Cancel</button>
+                <button type="submit" disabled={isSubmitting} className="flex-[2] py-5 bg-softMint text-charcoal font-black rounded-3xl text-xl shadow-lg border-2 border-mutedTeal/20 hover:bg-mutedTeal/10 transition-all">
                   {isSubmitting ? 'Saving...' : 'Save to Hub'}
                 </button>
               </div>
@@ -451,16 +451,16 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
       {/* Delete Modal - Solid background */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-charcoal/70 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
+          <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setShowDeleteModal(false)} />
           <div className="relative w-full max-w-sm bg-white rounded-[3.5rem] p-12 text-center shadow-2xl border-2 border-paleSage">
-             <div className="w-24 h-24 bg-careRose/10 rounded-full flex items-center justify-center text-careRose mx-auto mb-8">
+             <div className="w-24 h-24 bg-careRose/10 rounded-full flex items-center justify-center text-careRose mx-auto mb-8 border border-careRose/20">
                <AlertTriangle className="w-12 h-12" />
              </div>
              <h2 className="text-3xl font-black mb-6 text-charcoal">Remove?</h2>
-             <p className="text-mutedSlate mb-12 font-bold text-lg">Permanently delete "{medToDelete?.name}" from your hub?</p>
+             <p className="text-mutedSlate mb-12 font-black text-lg">Permanently delete "{medToDelete?.name}" from your hub?</p>
              <div className="flex flex-col gap-4">
-               <button onClick={confirmDeleteMedication} className="w-full py-6 bg-careRose text-white font-black rounded-3xl text-xl shadow-xl hover:brightness-110 active:scale-95 transition-all">Yes, Delete</button>
-               <button onClick={() => setShowDeleteModal(false)} className="w-full py-4 text-charcoal font-black text-lg hover:bg-lightSand rounded-2xl transition-all">No, Keep It</button>
+               <button onClick={confirmDeleteMedication} className="w-full py-6 bg-careRose/20 text-careRose border-2 border-careRose/30 font-black rounded-3xl text-xl shadow-md hover:bg-careRose/30 active:scale-95 transition-all">Yes, Delete</button>
+               <button onClick={() => setShowDeleteModal(false)} className="w-full py-4 text-charcoal font-black text-lg hover:bg-lightSand rounded-2xl transition-all border border-paleSage">No, Keep It</button>
              </div>
           </div>
         </div>

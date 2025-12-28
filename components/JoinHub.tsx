@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Logo } from '../constants';
 import { View } from '../types';
@@ -52,20 +53,20 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-[85vh] bg-softIvory flex flex-col items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md bg-paleSage rounded-[3rem] p-12 soft-shadow border border-softAsh/5 flex flex-col items-center">
-        <div className="p-6 rounded-[2rem] bg-warmAmber/10 text-warmAmber mb-10">
+      <div className="w-full max-w-md bg-white rounded-[3rem] p-12 shadow-xl border-2 border-paleSage flex flex-col items-center">
+        <div className="p-6 rounded-[2rem] bg-warmAmber/10 text-warmAmber mb-10 border border-warmAmber/20">
           <LinkIcon className="w-12 h-12" />
         </div>
         
-        <h1 className="text-3xl font-bold text-charcoal mb-4 text-center">
+        <h1 className="text-3xl font-black text-charcoal mb-4 text-center">
           Join Family Hub
         </h1>
-        <p className="text-mutedSlate text-center mb-12 text-lg">
+        <p className="text-mutedSlate text-center mb-12 text-lg font-black">
           Enter the 6-digit code shared with you.
         </p>
 
         {error && (
-          <div className="w-full p-4 mb-8 bg-warmAmber/10 text-warmAmber text-sm font-bold rounded-2xl border border-warmAmber/20">
+          <div className="w-full p-4 mb-8 bg-warmAmber/10 text-warmAmber text-sm font-black rounded-2xl border border-warmAmber/20">
             {error}
           </div>
         )}
@@ -79,13 +80,13 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
               value={joinCode}
               maxLength={6}
               onChange={(e) => setJoinCode(e.target.value.replace(/[^0-9]/g, ''))}
-              className="w-full h-18 bg-softIvory/50 border border-softAsh/10 rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.6em] text-center text-charcoal focus:outline-none focus:ring-4 focus:ring-warmAmber/10"
+              className="w-full h-18 bg-lightSand border-2 border-paleSage rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.6em] text-center text-charcoal focus:outline-none focus:border-warmAmber/30 transition-all placeholder:text-softAsh/20"
             />
           </div>
           <button 
             onClick={handleJoinHub}
             disabled={loading || joinCode.length !== 6}
-            className="w-full py-5 bg-warmAmber text-softIvory font-bold rounded-2xl soft-shadow hover:opacity-95 transition-all disabled:opacity-40 text-xl"
+            className="w-full py-5 bg-warmAmber/20 text-charcoal border-2 border-warmAmber/20 font-black rounded-2xl shadow-md hover:bg-warmAmber/30 transition-all disabled:opacity-40 text-xl"
           >
             {loading ? "Joining..." : "Enter Hub"}
           </button>
@@ -93,7 +94,7 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
 
         <button 
           onClick={() => onNavigate('hub-choice')}
-          className="flex items-center gap-2 text-mutedSlate hover:text-charcoal transition-colors font-bold text-base underline underline-offset-8 decoration-softAsh/30"
+          className="flex items-center gap-2 text-mutedSlate hover:text-charcoal transition-colors font-black text-base underline underline-offset-8 decoration-softAsh/30"
         >
           <ChevronLeft className="w-5 h-5" />
           Back to choices

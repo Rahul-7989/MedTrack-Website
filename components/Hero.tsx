@@ -15,8 +15,8 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
 
       <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
         <div className="flex-1 space-y-10 text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-mutedTeal text-white rounded-full text-xs font-black tracking-widest uppercase shadow-md">
-            <ShieldCheck className="w-5 h-5" />
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-softMint text-charcoal border border-mutedTeal/20 rounded-full text-xs font-black tracking-widest uppercase shadow-sm">
+            <ShieldCheck className="w-5 h-5 text-mutedTeal" />
             Reliable Family Care
           </div>
           
@@ -25,7 +25,7 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
             <span className="text-mutedTeal">stay healthy.</span>
           </h1>
           
-          <p className="text-xl md:text-3xl text-charcoal max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+          <p className="text-xl md:text-3xl text-mutedSlate max-w-xl mx-auto lg:mx-0 leading-relaxed font-black">
             A secure space for your family to coordinate medications. 
             Real-time updates for the people you love.
           </p>
@@ -33,7 +33,7 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
           <div className="pt-8 flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
             <button 
               onClick={onGetStarted}
-              className="px-12 py-6 bg-mutedTeal text-white font-black rounded-3xl shadow-2xl hover:brightness-95 active:scale-95 transition-all text-2xl"
+              className="px-12 py-6 bg-softMint text-charcoal font-black rounded-3xl border-4 border-mutedTeal/10 shadow-xl hover:bg-mutedTeal/10 active:scale-95 transition-all text-2xl"
             >
               Start Family Hub
             </button>
@@ -55,9 +55,9 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
                   <div className="h-14 w-full bg-lightSand rounded-3xl border border-paleSage" />
                   <div className="h-14 w-3/4 bg-lightSand rounded-3xl border border-paleSage" />
                 </div>
-                <div className="mt-auto p-8 bg-charcoal rounded-[3rem] text-white flex items-center justify-between shadow-xl">
+                <div className="mt-auto p-8 bg-softMint rounded-[3rem] text-charcoal flex items-center justify-between border-2 border-mutedTeal/20 shadow-md">
                   <span className="font-black text-xl">Dose Taken</span>
-                  <CheckCircle2 className="w-10 h-10 text-softMint" />
+                  <CheckCircle2 className="w-10 h-10 text-mutedTeal" />
                 </div>
               </div>
               
