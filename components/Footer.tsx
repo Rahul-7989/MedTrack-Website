@@ -35,15 +35,6 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      <div className="max-w-7xl mx-auto mt-20 pt-10 border-t border-softAsh/10 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-softAsh font-medium">
-        <p>© {new Date().getFullYear()} MedTrack Care Team. Designed with love for families.</p>
-        <div className="flex gap-8">
-          <button className="hover:text-charcoal transition-colors">Privacy</button>
-          <button className="hover:text-charcoal transition-colors">Terms</button>
-          <button className="hover:text-charcoal transition-colors">Accessibility</button>
-        </div>
-      </div>
     </footer>
   );
 };

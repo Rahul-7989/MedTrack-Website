@@ -16,7 +16,7 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
   const [error, setError] = useState('');
 
   const handleJoinHub = async () => {
-    if (!joinCode.trim()) return setError('Please enter a 6-digit code');
+    if (!joinCode.trim()) return setError('Please enter your 6-character code');
     
     setLoading(true);
     setError('');
@@ -25,11 +25,11 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
       const user = auth.currentUser;
       if (!user) throw new Error("Authentication required");
 
-      const q = query(collection(db, "hubs"), where("joinCode", "==", joinCode.trim()));
+      const q = query(collection(db, "hubs"), where("joinCode", "==", joinCode.trim().toUpperCase()));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        throw new Error("Invalid Code! Please check and try again.");
+        throw new Error("Couldn't find existing hub with that code. Please try again.");
       }
 
       const hubDoc = querySnapshot.docs[0];
@@ -43,7 +43,7 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
         familyHubId: hubId
       }, { merge: true });
 
-      onNavigate('home');
+      onNavigate('dashboard');
     } catch (err: any) {
       setError(err.message || 'Failed to join hub.');
     } finally {
@@ -62,7 +62,7 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
           Join Family Hub
         </h1>
         <p className="text-mutedSlate text-center mb-12 text-lg font-black">
-          Enter the 6-digit code shared with you.
+          Enter the 6-character code shared with you.
         </p>
 
         {error && (
@@ -76,11 +76,11 @@ const JoinHub: React.FC<JoinHubProps> = ({ onNavigate }) => {
             <label className="text-xs font-black uppercase tracking-[0.3em] text-softAsh ml-1">Enter Code</label>
             <input 
               type="text" 
-              placeholder="000000"
+              placeholder="ABC123"
               value={joinCode}
               maxLength={6}
-              onChange={(e) => setJoinCode(e.target.value.replace(/[^0-9]/g, ''))}
-              className="w-full h-18 bg-lightSand border-2 border-paleSage rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.6em] text-center text-charcoal focus:outline-none focus:border-warmAmber/30 transition-all placeholder:text-softAsh/20"
+              onChange={(e) => setJoinCode(e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase())}
+              className="w-full h-18 bg-lightSand border-2 border-paleSage rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.2em] text-center text-charcoal focus:outline-none focus:border-warmAmber/30 transition-all placeholder:text-softAsh/20 uppercase"
             />
           </div>
           <button 

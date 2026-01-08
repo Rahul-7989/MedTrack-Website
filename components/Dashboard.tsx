@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Plus, 
   Clock, 
@@ -52,7 +52,10 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
   const [medImage, setMedImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const notifiedMeds = useRef(new Set<string>());
+  // Track notifications locally to avoid duplicates in the same minute
+  const notifiedMeds = useRef(new Map<string, number>());
+  // Track missed IDs to notify other hub members only once
+  const lastKnownMissedIds = useRef(new Set<string>());
 
   useEffect(() => {
     if ("Notification" in window) {
@@ -87,11 +90,21 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const today = new Date().toISOString().split('T')[0];
+      const newMissedIds = new Set<string>();
+      
       const meds = snapshot.docs.map(docSnap => {
         const data = docSnap.data();
         let displayStatus = data.status as Medication['status'];
+        
+        // Daily Reset Logic: If medication was taken on a previous day, reset to pending
         if (data.lastTakenDate && data.lastTakenDate !== today && displayStatus === 'taken') {
           displayStatus = 'pending';
+          // Update DB silently if we detect stale status
+          updateDoc(doc(db, "medications", docSnap.id), { status: 'pending', lastTakenDate: '' });
+        }
+
+        if (displayStatus === 'missed') {
+          newMissedIds.add(docSnap.id);
         }
 
         return {
@@ -106,6 +119,20 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
         } as Medication;
       });
       
+      // Hub-wide Notification: If a medication just became "missed", notify all hub members
+      newMissedIds.forEach(id => {
+        if (!lastKnownMissedIds.current.has(id)) {
+          const med = meds.find(m => m.id === id);
+          if (med) {
+            sendBrowserNotification(
+              `Alert: Missed Dose in ${hubName}`, 
+              `${med.name} (${med.dosage}) was not taken. Family members have been notified.`
+            );
+          }
+        }
+      });
+      lastKnownMissedIds.current = newMissedIds;
+
       meds.sort((a, b) => a.reminderTime.localeCompare(b.reminderTime));
       setMedications(meds);
       setIsLoading(false);
@@ -115,45 +142,76 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
     });
 
     return () => unsubscribe();
-  }, [hubId]);
+  }, [hubId, hubName]);
 
   useEffect(() => {
+    // Check every 30 seconds for better precision on minute marks
     const interval = setInterval(() => {
       checkReminders();
-    }, 60000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [medications]);
 
   const checkReminders = () => {
     const now = new Date();
-    const currentH = String(now.getHours()).padStart(2, '0');
-    const currentM = String(now.getMinutes()).padStart(2, '0');
-    const currentTimeStr = `${currentH}:${currentM}`;
+    const today = now.toISOString().split('T')[0];
 
     medications.forEach(async (med) => {
-      if (med.status === 'taken') return;
-      
-      const notificationKey = `${med.id}-${currentTimeStr}`;
-      if (med.reminderTime === currentTimeStr && med.status === 'pending' && !notifiedMeds.current.has(notificationKey)) {
-        sendBrowserNotification(`Time for ${med.name}`, `Please take your ${med.dosage} now.`);
-        notifiedMeds.current.add(notificationKey);
-      }
+      // Don't remind for taken meds today
+      if (med.status === 'taken' && med.lastTakenDate === today) return;
 
       const [medH, medM] = med.reminderTime.split(':').map(Number);
-      const medTotalMinutes = medH * 60 + medM;
-      const nowTotalMinutes = now.getHours() * 60 + now.getMinutes();
+      const medDate = new Date(now);
+      medDate.setHours(medH, medM, 0, 0);
 
-      if (nowTotalMinutes > medTotalMinutes + 30 && med.status === 'pending') {
+      const diffMs = now.getTime() - medDate.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+
+      const notificationKey = `${med.id}-${diffMins}`;
+      
+      // 0 minutes: "Its time to take your medicine"
+      if (diffMins === 0 && !notifiedMeds.current.has(notificationKey)) {
+        sendBrowserNotification(`Its time to take your medicine`, `Time for ${med.name} (${med.dosage}).`);
+        notifiedMeds.current.set(notificationKey, Date.now());
+      }
+
+      // 10 minutes: "Please take your medicine. If taken, please mark as taken."
+      if (diffMins === 10 && med.status !== 'taken' && !notifiedMeds.current.has(notificationKey)) {
+        sendBrowserNotification(`Reminder: Please take your medicine`, `It is 10 minutes past the time for ${med.name}. If taken, please mark as taken.`);
+        notifiedMeds.current.set(notificationKey, Date.now());
+      }
+
+      // 12 minutes: "Family members are being notified. A dose has been missed."
+      if (diffMins >= 12 && med.status === 'pending') {
+        if (!notifiedMeds.current.has(notificationKey)) {
+          sendBrowserNotification(`Dose Missed`, `The family has been notified that ${med.name} was missed.`);
+          notifiedMeds.current.set(notificationKey, Date.now());
+        }
+        
+        // Update DB status to notify others via the snapshot listener
         try {
           await updateDoc(doc(db, "medications", med.id), { status: 'missed' });
-        } catch (err) { console.error(err); }
+        } catch (err) { 
+          console.error("Failed to mark missed dose:", err); 
+        }
       }
     });
+
+    // Cleanup old keys from notifiedMeds to prevent memory leaks
+    if (notifiedMeds.current.size > 100) {
+      const oneDayAgo = Date.now() - 86400000;
+      for (const [key, timestamp] of notifiedMeds.current.entries()) {
+        if (timestamp < oneDayAgo) notifiedMeds.current.delete(key);
+      }
+    }
   };
 
   const sendBrowserNotification = (title: string, body: string) => {
     if (Notification.permission === "granted") {
-      new Notification(title, { body });
+      new Notification(title, { 
+        body,
+        icon: '/favicon.ico' // Or a placeholder icon
+      });
     }
   };
 
@@ -268,9 +326,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
       )}
 
       {hasMissedDoses && (
-        <div className="bg-careRose/20 border-b border-careRose/30 py-5 px-6 md:px-12 flex items-center justify-center gap-4 text-careRose text-sm font-black">
+        <div className="bg-careRose/20 border-b border-careRose/30 py-5 px-6 md:px-12 flex items-center justify-center gap-4 text-careRose text-sm font-black animate-pulse">
           <AlertTriangle className="w-5 h-5" />
-          <span>Care Alert: A dose was missed. Hub members notified.</span>
+          <span>Care Alert: One or more doses have been missed. All family members notified.</span>
         </div>
       )}
 
@@ -289,7 +347,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
                 title="Copy join code"
               >
                 <span className="text-xs font-black uppercase tracking-[0.2em] text-softAsh">Join Code</span>
-                <span className="font-mono font-black text-mutedTeal text-2xl">{hubCode}</span>
+                <span className="font-mono font-black text-mutedTeal text-2xl uppercase">{hubCode}</span>
                 <div className="p-2 bg-softMint text-mutedTeal rounded-xl border border-mutedTeal/10">
                    {codeCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                 </div>
@@ -306,7 +364,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-12">
             <div className="space-y-8">
-              <h2 className="text-3xl font-black text-charcoal">Daily Tasks</h2>
+              <h2 className="text-3xl font-black text-charcoal">Daily Medications to take</h2>
 
               {isLoading ? (
                 <div className="py-24 flex flex-col items-center gap-6">
@@ -318,11 +376,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
                   {upcomingMeds.map((med) => {
                     const isMissed = med.status === 'missed';
                     return (
-                      <div key={med.id} className={`group relative bg-white rounded-[2.5rem] p-10 border-2 transition-all shadow-md ${isMissed ? 'border-careRose/40' : 'border-paleSage hover:shadow-2xl hover:border-mutedTeal/20'}`}>
+                      <div key={med.id} className={`group relative bg-white rounded-[2.5rem] p-10 border-2 transition-all shadow-md ${isMissed ? 'border-careRose/40 bg-careRose/[0.02]' : 'border-paleSage hover:shadow-2xl hover:border-mutedTeal/20'}`}>
                         <div className="flex justify-between items-start mb-10">
-                          <div className={`px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 ${isMissed ? 'bg-careRose/20 text-careRose border border-careRose/30' : 'bg-softMint text-charcoal border border-mutedTeal/10'}`}>
+                          <div className={`px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 ${isMissed ? 'bg-careRose text-white border border-careRose shadow-sm' : 'bg-softMint text-charcoal border border-mutedTeal/10'}`}>
                             {isMissed ? <AlertTriangle className="w-4 h-4" /> : <Clock className="w-4 h-4 text-mutedTeal" />}
-                            {isMissed ? 'Late' : 'Upcoming'}
+                            {isMissed ? 'Missed Dose' : 'Upcoming'}
                           </div>
                           <div className="flex gap-4">
                             <button onClick={(e) => openEditModal(e, med)} className="p-3 bg-lightSand text-softAsh rounded-xl hover:bg-mutedTeal/10 hover:text-charcoal transition-all border border-paleSage" aria-label="Edit"><Pencil className="w-5 h-5" /></button>
@@ -346,7 +404,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
 
                         <button 
                           onClick={() => handleTakeMedicine(med.id)} 
-                          className={`w-full py-5 font-black rounded-2xl text-charcoal shadow-md transition-all active:scale-95 text-lg border-2 ${isMissed ? 'bg-careRose/20 border-careRose/30' : 'bg-softMint border-mutedTeal/20'}`}
+                          className={`w-full py-5 font-black rounded-2xl text-charcoal shadow-md transition-all active:scale-95 text-lg border-2 ${isMissed ? 'bg-careRose/20 border-careRose/40 hover:bg-careRose/30' : 'bg-softMint border-mutedTeal/20 hover:bg-mutedTeal/5'}`}
                         >
                           Mark as Taken
                         </button>
@@ -365,18 +423,18 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
 
             {takenMeds.length > 0 && (
               <div className="space-y-8">
-                <h2 className="text-3xl font-black text-charcoal">Completed</h2>
+                <h2 className="text-3xl font-black text-charcoal">Completed Today</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {takenMeds.map((med) => (
                     <div key={med.id} className="bg-paleSage/30 rounded-[2.5rem] p-8 border-2 border-paleSage">
                       <div className="flex justify-between items-center mb-6">
-                        <span className="text-xs font-black uppercase tracking-widest text-charcoal bg-softMint border border-mutedTeal/20 px-4 py-1.5 rounded-full">Completed</span>
-                        <button onClick={() => handleUntakeMedicine(med.id)} className="p-3 text-softAsh hover:text-mutedTeal bg-white rounded-xl shadow-sm transition-all border border-paleSage">
+                        <span className="text-xs font-black uppercase tracking-widest text-charcoal bg-softMint border border-mutedTeal/20 px-4 py-1.5 rounded-full">Taken</span>
+                        <button onClick={() => handleUntakeMedicine(med.id)} className="p-3 text-softAsh hover:text-mutedTeal bg-white rounded-xl shadow-sm transition-all border border-paleSage" title="Reset to pending">
                           <RotateCcw className="w-5 h-5" />
                         </button>
                       </div>
                       <h3 className="text-xl font-black text-mutedSlate line-through decoration-mutedSlate/40">{med.name}</h3>
-                      <p className="text-softAsh font-black mt-1">Logged at {formatDisplayTime(med.reminderTime)}</p>
+                      <p className="text-softAsh font-black mt-1">Scheduled: {formatDisplayTime(med.reminderTime)}</p>
                     </div>
                   ))}
                 </div>
@@ -391,23 +449,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
                <ShieldCheck className="w-12 h-12 text-mutedTeal mb-10 relative z-10" />
                <h3 className="text-3xl font-black leading-tight mb-6 relative z-10">Family Shield</h3>
                <p className="text-lg text-mutedSlate font-black leading-relaxed relative z-10">
-                 MedTrack monitors your family hub. Late doses are flagged to all members to ensure consistent care.
+                 MedTrack monitors your hub in real-time. If a dose is 12 minutes late, all family members receive an alert.
                </p>
             </div>
             
             {/* Progress Widget */}
             <div className="bg-white rounded-[3.5rem] p-12 shadow-md border-2 border-paleSage space-y-8">
                <div className="flex items-center justify-between">
-                 <h3 className="text-2xl font-black text-charcoal">Daily Status</h3>
+                 <h3 className="text-2xl font-black text-charcoal">Hub Progress</h3>
                  <span className="text-3xl font-black text-mutedTeal">{completionRate}%</span>
                </div>
                <div className="w-full bg-lightSand h-5 rounded-full overflow-hidden border border-paleSage">
                   <div className="bg-mutedTeal h-full transition-all duration-1000" style={{ width: `${completionRate}%` }} />
                </div>
                <p className="text-lg text-mutedSlate font-black leading-tight">
-                 Hub progress is <span className="text-mutedTeal">{completionRate}%</span> complete.
+                 Daily goal is <span className="text-mutedTeal">{completionRate}%</span> reached.
                </p>
-               <p className="text-softAsh text-sm font-black">Keep up the great teamwork!</p>
+               <p className="text-softAsh text-sm font-black">All medications will reset automatically at midnight.</p>
             </div>
           </div>
         </div>
@@ -421,7 +479,6 @@ const Dashboard: React.FC<DashboardProps> = ({ user, hubName, hubId }) => {
             <h2 className="text-4xl font-black text-charcoal mb-10">{editId ? 'Edit Medicine' : 'New Medicine'}</h2>
 
             <form onSubmit={handleSaveMedication} className="space-y-8">
-              {/* Image Upload Selection */}
               <div className="space-y-3">
                 <label className="text-xs font-black uppercase tracking-widest text-softAsh ml-1">Visual Guide (Optional)</label>
                 <div className="flex items-center gap-6">

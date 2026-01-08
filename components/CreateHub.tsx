@@ -18,9 +18,10 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
   const [error, setError] = useState('');
 
   const generateCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
     for (let i = 0; i < 6; i++) {
-      result += Math.floor(Math.random() * 10).toString();
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return result;
   };
@@ -60,7 +61,7 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
         familyHubId: hubRef.id
       }, { merge: true });
 
-      onNavigate('home'); 
+      onNavigate('dashboard'); 
     } catch (err: any) {
       setError(err.message || 'Something went wrong while creating the hub.');
     } finally {
@@ -114,7 +115,7 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
                   type="text" 
                   value={joinCode}
                   readOnly
-                  className="w-full h-16 bg-softMint/30 border-2 border-dashed border-mutedTeal/20 rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.5em] text-mutedTeal text-center focus:outline-none"
+                  className="w-full h-16 bg-softMint/30 border-2 border-dashed border-mutedTeal/20 rounded-2xl px-6 text-4xl font-mono font-black tracking-[0.2em] text-mutedTeal text-center focus:outline-none uppercase"
                 />
               </div>
               <button 
@@ -142,7 +143,7 @@ const CreateHub: React.FC<CreateHubProps> = ({ onNavigate }) => {
             </button>
             <button 
               onClick={() => onNavigate('hub-choice')}
-              className="py-2 text-mutedSlate hover:text-charcoal font-black transition-colors text-base underline underline-offset-8 decoration-softAsh/30"
+              className="py-2 text-mutedSlate font-black hover:text-charcoal transition-colors text-base underline underline-offset-8 decoration-softAsh/30"
             >
               Cancel and go back
             </button>

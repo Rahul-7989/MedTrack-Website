@@ -35,7 +35,7 @@ const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
               onClick={onGetStarted}
               className="px-12 py-6 bg-softMint text-charcoal font-black rounded-3xl border-4 border-mutedTeal/10 shadow-xl hover:bg-mutedTeal/10 active:scale-95 transition-all text-2xl"
             >
-              Start Family Hub
+              Get Started
             </button>
           </div>
         </div>

@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, currentView, user, hubName,
               onClick={() => onNavigate('signup')}
               className="px-6 py-2.5 text-sm font-black bg-softMint text-charcoal border-2 border-mutedTeal/10 hover:bg-mutedTeal/10 transition-all rounded-xl shadow-sm"
             >
-              Join Hub
+              Get Started
             </button>
           </div>
         )}

@@ -13,7 +13,7 @@ import Dashboard from './components/Dashboard';
 import { View, User } from './types';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('home');
@@ -23,44 +23,57 @@ const App: React.FC = () => {
   const [activeHubId, setActiveHubId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Auth Listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setIsLoading(true);
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser({
           name: currentUser.displayName || 'Friend',
           email: currentUser.email || ''
         });
-        
-        try {
-          const userSnap = await getDoc(doc(db, "users", currentUser.uid));
-          if (userSnap.exists() && userSnap.data().familyHubId) {
-            const hubId = userSnap.data().familyHubId;
-            const hubSnap = await getDoc(doc(db, "hubs", hubId));
-            if (hubSnap.exists()) {
-              setActiveHubName(hubSnap.data().hubName);
-              setActiveHubId(hubId);
-              setHasHub(true);
-            } else {
-              setHasHub(false);
-            }
-          } else {
-            setHasHub(false);
-          }
-        } catch (error) {
-          console.error("Auth sync error:", error);
-          setHasHub(false);
-        }
       } else {
         setUser(null);
         setHasHub(false);
         setActiveHubId(null);
         setActiveHubName(null);
+        setIsLoading(false);
+        setView('home');
+      }
+    });
+    return () => unsubscribeAuth();
+  }, []);
+
+  // Hub Listener (Reactive to User Doc changes)
+  useEffect(() => {
+    if (!user || !auth.currentUser) return;
+    
+    setIsLoading(true);
+    const unsubscribeUser = onSnapshot(doc(db, "users", auth.currentUser.uid), async (userSnap) => {
+      if (userSnap.exists() && userSnap.data().familyHubId) {
+        const hubId = userSnap.data().familyHubId;
+        const hubSnap = await getDoc(doc(db, "hubs", hubId));
+        if (hubSnap.exists()) {
+          setActiveHubName(hubSnap.data().hubName);
+          setActiveHubId(hubId);
+          setHasHub(true);
+          // If the user just joined/created, ensure we switch to dashboard view
+          if (['create-hub', 'join-hub', 'hub-choice'].includes(view)) {
+            setView('dashboard');
+          }
+        } else {
+          setHasHub(false);
+        }
+      } else {
+        setHasHub(false);
       }
       setIsLoading(false);
+    }, (error) => {
+      console.error("User doc listener error:", error);
+      setIsLoading(false);
     });
-    return () => unsubscribe();
-  }, []);
+
+    return () => unsubscribeUser();
+  }, [user, view]);
 
   const handleNavigate = (newView: View) => {
     setView(newView);
@@ -70,7 +83,6 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      setView('home');
     } catch (error) {
       console.error("Logout failed", error);
     }
@@ -107,7 +119,7 @@ const App: React.FC = () => {
                   onClick={() => handleNavigate('signup')} 
                   className="px-12 py-5 bg-softMint text-charcoal font-black rounded-2xl border-2 border-mutedTeal/20 shadow-lg hover:bg-mutedTeal/10 transition-all text-xl"
                 >
-                  Start Your Family Hub
+                  Get Started
                 </button>
                 <button 
                   onClick={() => handleNavigate('signin')} 
