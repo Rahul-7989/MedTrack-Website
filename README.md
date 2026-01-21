@@ -1,20 +1,29 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🩺 MedTrack
 
-# Run and deploy your AI Studio app
+**MedTrack** is a family-centered medication tracking web application that helps ensure no medicine dose is missed. It allows patients and family members to stay connected through shared reminders, clear medication details, and simple accountability.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/drive/13I6zXSrX95jck-yWZnGVHQ9-7uv65iuL
+## ✨ Features
 
-## Run Locally
+- Email & password–based user authentication  
+- Create or join a Family Hub using a **6-digit unique code**  
+- Shared Family Hub dashboard for all members  
+- Medication cards with:
+  - Medicine image
+  - Dosage and description
+  - Reminder time  
+- One-click intake confirmation  
+- Automatic missed-dose detection with family alerts  
+- Edit and delete medication cards with confirmation  
+- Clean, light-mode UI designed for accessibility  
 
-**Prerequisites:**  Node.js
+---
 
+## 🛠 Tech Stack
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- **Frontend:** HTML, CSS, JavaScript  
+- **Backend & Database:** Firebase Authentication, Firestore  
+- **Hosting:** Vercel  
+- **AI & Design Support:** Google AI Studio  
+
